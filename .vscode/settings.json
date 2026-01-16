@@ -1,0 +1,6 @@
+{
+  "headwind.runOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  }
+}
