@@ -5,28 +5,80 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { AboutSection } from "@/components/about-section";
-import { Product } from "@/lib/types";
 import { ProductCard } from "@/components/product-card";
+import { useSearchParams } from "next/navigation";
+import { useProductsStore } from "@/lib/store/products-store";
+import { LayoutGrid, LayoutList } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function ProductsPage() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+
+  const { products, fetchProducts, isLoading } = useProductsStore();
+
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [showNewOnly, setShowNewOnly] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+
+  // Inicializar con el query param si existe (solo la primera vez)
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => {
+    return categoryParam ? [categoryParam] : [];
+  });
 
   useEffect(() => {
-    fetch("/data/products.json")
-      .then((res) => res.json())
-      .then((data) => setProducts(data.products));
-  }, []);
+    fetchProducts();
+  }, [fetchProducts]);
 
   const brands = ["Audiophile", "Sony", "Bose", "Sennheiser"];
+  const categories = ["headphones", "speakers", "earphones"];
+
+  const toggleCategory = (category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category],
+    );
+  };
 
   const toggleBrand = (brand: string) => {
     setSelectedBrands((prev) =>
-      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
+      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand],
     );
   };
+
+  // Filtrar productos según criterios seleccionados
+  const filteredProducts = products.filter((product) => {
+    // Filtro por categoría (desde query param o selección manual)
+    if (
+      selectedCategories.length > 0 &&
+      !selectedCategories.includes(product.category)
+    ) {
+      return false;
+    }
+
+    // Filtro por rango de precio
+    if (product.price < priceRange[0] || product.price > priceRange[1]) {
+      return false;
+    }
+
+    // Filtro por marca (si existe la propiedad)
+    if (
+      selectedBrands.length > 0 &&
+      !selectedBrands.some((brand) => product.name.includes(brand))
+    ) {
+      return false;
+    }
+
+    // Filtro por productos nuevos
+    if (showNewOnly && !product.new) {
+      return false;
+    }
+
+    return true;
+  });
 
   return (
     <>
@@ -85,6 +137,33 @@ export default function ProductsPage() {
                   </div>
                 </div>
 
+                {/* Category Filter */}
+                <div>
+                  <Label className="mb-4 block text-sm font-bold text-black">
+                    Category
+                  </Label>
+                  <div className="space-y-3">
+                    {categories.map((category) => (
+                      <div
+                        key={category}
+                        className="flex items-center space-x-2"
+                      >
+                        <Checkbox
+                          id={category}
+                          checked={selectedCategories.includes(category)}
+                          onCheckedChange={() => toggleCategory(category)}
+                        />
+                        <Label
+                          htmlFor={category}
+                          className="cursor-pointer text-sm text-zinc-700 capitalize"
+                        >
+                          {category}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 {/* New Products Only */}
                 <div>
                   <div className="flex items-center space-x-2">
@@ -110,6 +189,7 @@ export default function ProductsPage() {
                   onClick={() => {
                     setPriceRange([0, 5000]);
                     setSelectedBrands([]);
+                    setSelectedCategories([]);
                     setShowNewOnly(false);
                   }}
                 >
@@ -119,10 +199,116 @@ export default function ProductsPage() {
             </aside>
 
             {/* Products Grid */}
-            <div className="space-y-32 lg:col-span-3">
-              {products.map((product, index) => (
-                <ProductCard key={product.id} product={product} index={index} />
-              ))}
+            <div className="lg:col-span-3">
+              {/* Header con título y botones de vista */}
+              <div className="mb-8 flex items-center justify-between">
+                <div>
+                  {categoryParam && (
+                    <>
+                      <h2 className="text-3xl font-bold uppercase text-black">
+                        {categoryParam}
+                      </h2>
+                      <p className="mt-2 text-zinc-600">
+                        {filteredProducts.length} product
+                        {filteredProducts.length !== 1 ? "s" : ""} found
+                      </p>
+                    </>
+                  )}
+                </div>
+                {/* Botones de vista */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`rounded-lg p-2 transition-colors ${
+                      viewMode === "list"
+                        ? "bg-orange-600 text-white"
+                        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                    }`}
+                    title="List view"
+                  >
+                    <LayoutList className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`rounded-lg p-2 transition-colors ${
+                      viewMode === "grid"
+                        ? "bg-orange-600 text-white"
+                        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                    }`}
+                    title="Grid view"
+                  >
+                    <LayoutGrid className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              {/* Vista de productos */}
+              {filteredProducts.length > 0 ? (
+                viewMode === "list" ? (
+                  <div className="space-y-32">
+                    {filteredProducts.map((product, index) => (
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    {filteredProducts.map((product) => (
+                      <div
+                        key={product.id}
+                        className="group flex flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white transition-shadow hover:shadow-lg"
+                      >
+                        {/* Product Image */}
+                        <div className="relative h-[280px] overflow-hidden bg-zinc-100">
+                          <Image
+                            src={product.image.desktop}
+                            alt={product.name}
+                            fill
+                            className="object-contain p-8 transition-transform group-hover:scale-105"
+                          />
+                          {product.new && (
+                            <span className="absolute left-4 top-4 rounded-full bg-orange-600 px-3 py-1 text-xs font-bold uppercase text-white">
+                              New
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Product Info */}
+                        <div className="flex flex-1 flex-col p-6">
+                          <h3 className="mb-2 text-lg font-bold uppercase text-black">
+                            {product.name}
+                          </h3>
+                          <p className="mb-4 line-clamp-2 flex-1 text-sm text-zinc-600">
+                            {product.description}
+                          </p>
+                          <p className="mb-4 text-lg font-bold text-black">
+                            ${product.price.toLocaleString()}
+                          </p>
+                          <Link
+                            href={`/products/${product.slug}`}
+                            className="w-full"
+                          >
+                            <Button
+                              size="lg"
+                              className="w-full text-sm font-bold uppercase tracking-wider"
+                            >
+                              See Product
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20">
+                  <p className="text-xl text-zinc-600">
+                    No products found matching your filters
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

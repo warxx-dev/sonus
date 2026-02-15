@@ -2,36 +2,28 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { RelatedProducts } from "@/components/related-products";
 import { CategoriesSection } from "@/components/categories-section";
 import { AboutSection } from "@/components/about-section";
-
-// Mock product data - replace with actual data fetching
-const product = {
-  slug: "xx99-mark-ii-headphones",
-  name: "XX99 MARK II HEADPHONES",
-  isNew: true,
-  price: 2999,
-  description:
-    "The new XX99 Mark II headphones is the pinnacle of pristine audio. It redefines your premium headphone experience by reproducing the balanced depth and precision of studio-quality sound.",
-  image: "/images/products/xx99-mark-ii.png",
-  features: [
-    "Featuring a genuine leather head strap and premium earcups, these headphones deliver superior comfort for those who like to enjoy endless listening. It includes intuitive controls designed for any situation. Whether you're taking a business call or just in your own personal space, the auto on/off and pause features ensure that you'll never miss a beat.",
-    "The advanced Active Noise Cancellation with built-in equalizer allow you to experience your audio world on your terms. It lets you enjoy your audio in peace, but quickly interact with your surroundings when you need to. Combined with Bluetooth 5. 0 compliant connectivity and 17 hour battery life, the XX99 Mark II headphones gives you superior sound, cutting-edge technology, and a modern design aesthetic.",
-  ],
-  inTheBox: [
-    { quantity: 1, item: "Headphone Unit" },
-    { quantity: 2, item: "Replacement Earcups" },
-    { quantity: 1, item: "User Manual" },
-    { quantity: 1, item: "3.5mm 5m Audio Cable" },
-    { quantity: 1, item: "Travel Bag" },
-  ],
-};
+import { useProductsStore } from "@/lib/store/products-store";
+import { useCartStore } from "@/lib/store/cart-store";
 
 export default function ProductPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+
+  const { getProductBySlug, fetchProducts, isLoading } = useProductsStore();
+  const { addItem } = useCartStore();
+  const product = getProductBySlug(slug);
+
   const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const handleDecrease = () => {
     if (quantity > 1) setQuantity(quantity - 1);
@@ -40,6 +32,40 @@ export default function ProductPage() {
   const handleIncrease = () => {
     setQuantity(quantity + 1);
   };
+
+  const handleAddToCart = () => {
+    if (product) {
+      addItem(
+        {
+          id: product.id,
+          slug: product.slug,
+          name: product.name,
+          shortName: product.shortName,
+          price: product.price,
+          image: product.cartImage,
+        },
+        quantity,
+      );
+      // Resetear cantidad después de agregar
+      setQuantity(1);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-xl">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-xl">Product not found</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -59,7 +85,7 @@ export default function ProductPage() {
             {/* Left - Product Image */}
             <div className="relative h-[400px] overflow-hidden rounded-lg bg-zinc-100 lg:h-[560px]">
               <Image
-                src={product.image}
+                src={product.image.desktop}
                 alt={product.name}
                 fill
                 className="object-contain p-12"
@@ -68,7 +94,7 @@ export default function ProductPage() {
 
             {/* Right - Product Info */}
             <div className="flex flex-col justify-center space-y-6">
-              {product.isNew && (
+              {product.new && (
                 <p className="text-sm font-medium uppercase tracking-[0.5em] text-orange-600">
                   NEW PRODUCT
                 </p>
@@ -95,7 +121,7 @@ export default function ProductPage() {
                   >
                     -
                   </Button>
-                  <span className="w-12 text-center text-sm font-bold">
+                  <span className="w-12 text-center text-sm font-bold text-black">
                     {quantity}
                   </span>
                   <Button
@@ -111,6 +137,7 @@ export default function ProductPage() {
                 {/* Add to Cart Button */}
                 <Button
                   size="lg"
+                  onClick={handleAddToCart}
                   className="bg-orange-600 px-8 text-sm font-bold uppercase tracking-wider hover:bg-orange-700"
                 >
                   ADD TO CART
@@ -131,14 +158,9 @@ export default function ProductPage() {
                 FEATURES
               </h2>
               <div className="space-y-6">
-                {product.features.map((feature, index) => (
-                  <p
-                    key={index}
-                    className="text-base leading-relaxed text-zinc-600"
-                  >
-                    {feature}
-                  </p>
-                ))}
+                <p className="text-base leading-relaxed text-zinc-600">
+                  {product.features}
+                </p>
               </div>
             </div>
 
@@ -148,7 +170,7 @@ export default function ProductPage() {
                 IN THE BOX
               </h2>
               <ul className="space-y-2">
-                {product.inTheBox.map((item, index) => (
+                {product.includedItems.map((item, index) => (
                   <li key={index} className="flex gap-4">
                     <span className="font-bold text-orange-600">
                       {item.quantity}x
@@ -162,11 +184,43 @@ export default function ProductPage() {
         </div>
       </section>
 
-      {/* Related Products */}
-      <RelatedProducts />
+      {/* Gallery Section */}
+      <section className="w-full bg-white py-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* First Image */}
+            <div className="relative h-[300px] overflow-hidden rounded-lg">
+              <Image
+                src={product.gallery.first.desktop}
+                alt={`${product.name} gallery 1`}
+                fill
+                className="object-cover"
+              />
+            </div>
+            {/* Second Image */}
+            <div className="relative h-[300px] overflow-hidden rounded-lg md:row-span-2">
+              <Image
+                src={product.gallery.third.desktop}
+                alt={`${product.name} gallery 3`}
+                fill
+                className="object-cover"
+              />
+            </div>
+            {/* Third Image */}
+            <div className="relative h-[300px] overflow-hidden rounded-lg">
+              <Image
+                src={product.gallery.second.desktop}
+                alt={`${product.name} gallery 2`}
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* Categories Section */}
-      <CategoriesSection />
+      {/* Related Products */}
+      <RelatedProducts relatedProducts={product.others} />
 
       {/* About Section */}
       <AboutSection />

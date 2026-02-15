@@ -2,28 +2,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-const relatedProducts = [
-  {
-    id: 1,
-    name: "XX99 MARK I",
-    image: "/images/related/xx99-mark-i.png",
-    slug: "xx99-mark-i-headphones",
-  },
-  {
-    id: 2,
-    name: "XX59",
-    image: "/images/related/xx59.png",
-    slug: "xx59-headphones",
-  },
-  {
-    id: 3,
-    name: "ZX9 SPEAKER",
-    image: "/images/related/zx9-speaker.png",
-    slug: "zx9-speaker",
-  },
-];
+interface RelatedProduct {
+  slug: string;
+  name: string;
+  image: {
+    mobile: string;
+    tablet: string;
+    desktop: string;
+  };
+}
 
-export function RelatedProducts() {
+interface RelatedProductsProps {
+  relatedProducts: RelatedProduct[];
+}
+
+export function RelatedProducts({ relatedProducts }: RelatedProductsProps) {
   return (
     <section className="w-full bg-white py-20">
       <div className="mx-auto max-w-7xl px-6">
@@ -34,13 +27,13 @@ export function RelatedProducts() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {relatedProducts.map((product) => (
             <div
-              key={product.id}
+              key={product.slug}
               className="flex flex-col items-center space-y-6"
             >
               {/* Product Image */}
               <div className="relative h-80 w-full overflow-hidden rounded-lg bg-zinc-100">
                 <Image
-                  src={product.image}
+                  src={product.image.desktop}
                   alt={product.name}
                   fill
                   className="object-contain p-8"
@@ -53,10 +46,10 @@ export function RelatedProducts() {
               </h3>
 
               {/* See Product Button */}
-              <Link href={`/products/${product.slug}`}>
+              <Link href={`/products/${product.slug.split("/")[1]}`}>
                 <Button
                   size="lg"
-                  className="px-8 py-6 text-white text-sm font-bold uppercase tracking-wider"
+                  className="px-8 py-6 text-sm font-bold uppercase tracking-wider text-white"
                 >
                   SEE PRODUCT
                 </Button>

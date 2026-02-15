@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -17,6 +17,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useState } from "react";
+import { CartSheet } from "@/components/cart-sheet";
 
 const navigationItems = [
   { name: "HOME", href: "/" },
@@ -29,7 +30,7 @@ export function Header() {
 
   return (
     <header className="mx-auto w-full bg-zinc-900 text-white">
-      <div className="mx-auto flex items-center border-b border-zinc-600 justify-between px-6 py-4 max-w-7xl">
+      <div className="mx-auto flex items-center justify-between border-b border-zinc-600 px-6 py-4 max-w-7xl">
         {/* Mobile Menu Button */}
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild className="lg:hidden">
@@ -85,13 +86,7 @@ export function Header() {
         </NavigationMenu>
 
         {/* Cart Button */}
-        <Button
-          size="icon"
-          aria-label="Shopping cart"
-          className="cursor-pointer bg-transparent text-white hover:bg-white/10 hover:text-orange-500"
-        >
-          <ShoppingCart className="h-6 w-6" />
-        </Button>
+        <CartSheet />
       </div>
     </header>
   );

@@ -7,40 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-
-// Mock cart data - replace with actual cart state management
-const cartItems = [
-  {
-    id: 1,
-    name: "XX99 MK II",
-    price: 2999,
-    quantity: 1,
-    image: "/images/cart/xx99-mk-ii.png",
-  },
-  {
-    id: 2,
-    name: "XX59",
-    price: 899,
-    quantity: 2,
-    image: "/images/cart/xx59.png",
-  },
-  {
-    id: 3,
-    name: "YX1",
-    price: 599,
-    quantity: 1,
-    image: "/images/cart/yx1.png",
-  },
-];
+import { useCartStore } from "@/lib/store/cart-store";
+import { ShoppingCart } from "lucide-react";
 
 export default function CheckoutPage() {
+  const { items, getTotalPrice } = useCartStore();
   const [paymentMethod, setPaymentMethod] = useState("e-money");
 
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-  const shipping = 50;
+  const subtotal = getTotalPrice();
+  const shipping = items.length > 0 ? 50 : 0;
   const vat = Math.round(subtotal * 0.2);
   const total = subtotal + shipping;
 
@@ -261,69 +236,88 @@ export default function CheckoutPage() {
                 </h2>
 
                 {/* Cart Items */}
-                <div className="mb-6 space-y-6">
-                  {cartItems.map((item) => (
-                    <div key={item.id} className="flex items-center gap-4">
-                      <div className="relative h-16 w-16 overflow-hidden rounded-lg bg-zinc-100">
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          fill
-                          className="object-contain p-2"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-bold text-black">
-                          {item.name}
-                        </p>
-                        <p className="text-sm text-zinc-500">
-                          $ {item.price.toLocaleString()}
-                        </p>
-                      </div>
-                      <p className="text-sm font-bold text-zinc-500">
-                        x{item.quantity}
-                      </p>
+                {items.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <ShoppingCart className="mb-4 h-16 w-16 text-zinc-300" />
+                    <p className="text-center text-zinc-500">
+                      Your cart is empty
+                    </p>
+                    <Link href="/products" className="mt-4">
+                      <Button>Continue Shopping</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <>
+                    <div className="mb-6 space-y-6">
+                      {items.map((item) => (
+                        <div key={item.id} className="flex items-center gap-4">
+                          <div className="relative h-16 w-16 overflow-hidden rounded-lg bg-zinc-100">
+                            <Image
+                              src={item.image}
+                              alt={item.name}
+                              fill
+                              className="object-contain p-2"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-bold text-black">
+                              {item.shortName}
+                            </p>
+                            <p className="text-sm text-zinc-500">
+                              $ {item.price.toLocaleString()}
+                            </p>
+                          </div>
+                          <p className="text-sm font-bold text-zinc-500">
+                            x{item.quantity}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
 
-                {/* Totals */}
-                <div className="space-y-2 border-t border-zinc-200 pt-6">
-                  <div className="flex justify-between">
-                    <p className="text-sm uppercase text-zinc-500">TOTAL</p>
-                    <p className="text-lg font-bold text-black">
-                      $ {subtotal.toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p className="text-sm uppercase text-zinc-500">SHIPPING</p>
-                    <p className="text-lg font-bold text-black">$ {shipping}</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p className="text-sm uppercase text-zinc-500">
-                      VAT (INCLUDED)
-                    </p>
-                    <p className="text-lg font-bold text-black">
-                      $ {vat.toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="flex justify-between pt-4">
-                    <p className="text-sm uppercase text-zinc-500">
-                      GRAND TOTAL
-                    </p>
-                    <p className="text-lg font-bold text-orange-600">
-                      $ {total.toLocaleString()}
-                    </p>
-                  </div>
-                </div>
+                    {/* Totals */}
+                    <div className="space-y-2 border-t border-zinc-200 pt-6">
+                      <div className="flex justify-between">
+                        <p className="text-sm uppercase text-zinc-500">TOTAL</p>
+                        <p className="text-lg font-bold text-black">
+                          $ {subtotal.toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="flex justify-between">
+                        <p className="text-sm uppercase text-zinc-500">
+                          SHIPPING
+                        </p>
+                        <p className="text-lg font-bold text-black">
+                          $ {shipping}
+                        </p>
+                      </div>
+                      <div className="flex justify-between">
+                        <p className="text-sm uppercase text-zinc-500">
+                          VAT (INCLUDED)
+                        </p>
+                        <p className="text-lg font-bold text-black">
+                          $ {vat.toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="flex justify-between pt-4">
+                        <p className="text-sm uppercase text-zinc-500">
+                          GRAND TOTAL
+                        </p>
+                        <p className="text-lg font-bold text-orange-600">
+                          $ {total.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
 
-                {/* Continue & Pay Button */}
-                <Button
-                  size="lg"
-                  className="mt-8 w-full bg-orange-600 py-6 text-sm font-bold uppercase tracking-wider hover:bg-orange-700"
-                >
-                  CONTINUE & PAY
-                </Button>
+                    {/* Continue & Pay Button */}
+                    <Button
+                      size="lg"
+                      className="mt-8 w-full bg-orange-600 py-6 text-sm font-bold uppercase tracking-wider hover:bg-orange-700"
+                      disabled={items.length === 0}
+                    >
+                      CONTINUE & PAY
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
