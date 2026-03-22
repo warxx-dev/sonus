@@ -1,13 +1,12 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import { Product } from '@/src/payload-types'
+import { ProductCard } from './ProductsPage/product-card'
 
 interface RelatedProductsProps {
   relatedProducts: Product[]
 }
 
 export function RelatedProducts({ relatedProducts }: RelatedProductsProps) {
+  console.log(relatedProducts[0].image)
   return (
     <section className="w-full bg-white py-20">
       <div className="mx-auto max-w-7xl px-6">
@@ -16,33 +15,8 @@ export function RelatedProducts({ relatedProducts }: RelatedProductsProps) {
         </h2>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {relatedProducts.map((product) => (
-            <div key={product.id} className="flex flex-col items-center space-y-6">
-              {/* Product Image */}
-              <div className="relative h-80 w-full overflow-hidden rounded-lg bg-zinc-100">
-                <Image
-                  src={product.image.toString()}
-                  alt={product.name}
-                  fill
-                  className="object-contain p-8"
-                />
-              </div>
-
-              {/* Product Name */}
-              <h3 className="text-xl font-bold uppercase tracking-wide text-black">
-                {product.name}
-              </h3>
-
-              {/* See Product Button */}
-              <Link href={`/products/${product.id}`}>
-                <Button
-                  size="lg"
-                  className="px-8 py-6 text-sm font-bold uppercase tracking-wider text-white"
-                >
-                  SEE PRODUCT
-                </Button>
-              </Link>
-            </div>
+          {relatedProducts.map((product, index) => (
+            <ProductCard product={product} key={index} />
           ))}
         </div>
       </div>

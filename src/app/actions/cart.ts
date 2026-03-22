@@ -11,9 +11,6 @@ export interface CartProduct {
   image: string | null
 }
 
-/**
- * Serializa un producto a los campos mínimos necesarios para el carrito.
- */
 function serializeForCart(product: Product): CartProduct {
   const image = typeof product.image === 'object' ? ((product.image as Media).url ?? null) : null
 
@@ -25,12 +22,6 @@ function serializeForCart(product: Product): CartProduct {
   }
 }
 
-/**
- * Valida que un producto existe y devuelve los datos necesarios
- * para agregarlo al carrito en el cliente.
- *
- * Verifica que la cantidad sea válida (>= 1).
- */
 export async function addToCart(
   productId: number,
   quantity: number = 1,
@@ -40,7 +31,6 @@ export async function addToCart(
   quantity: number
   error?: string
 }> {
-  // Validar cantidad
   if (quantity < 1 || !Number.isInteger(quantity)) {
     return {
       success: false,
@@ -74,11 +64,6 @@ export async function addToCart(
   }
 }
 
-/**
- * Valida múltiples productos del carrito.
- * Útil para verificar que los items del carrito (localStorage)
- * siguen existiendo en el CMS y tienen precios actualizados.
- */
 export async function validateCartItems(items: { productId: number; quantity: number }[]): Promise<{
   validItems: (CartProduct & { quantity: number })[]
   invalidIds: number[]

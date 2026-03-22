@@ -5,10 +5,6 @@ import type { Where } from 'payload'
 import configPromise from '@payload-config'
 import type { Product } from '@/src/payload-types'
 
-/**
- * Obtiene todos los productos del CMS.
- * Opcionalmente filtra por categoría.
- */
 export async function getProducts(options?: {
   category?: 'earphones' | 'speakers' | 'headphones'
   limit?: number
@@ -36,15 +32,12 @@ export async function getProducts(options?: {
     limit: options?.limit ?? 100,
     page: options?.page ?? 1,
     sort: options?.sort ?? '-createdAt',
-    depth: 1, // Incluir relación de imagen
+    depth: 1,
   })
 
   return result
 }
 
-/**
- * Obtiene un producto por su ID.
- */
 export async function getProductById(id: number): Promise<Product | null> {
   const payload = await getPayload({ config: configPromise })
 
@@ -61,9 +54,6 @@ export async function getProductById(id: number): Promise<Product | null> {
   }
 }
 
-/**
- * Obtiene un producto por su nombre (búsqueda parcial).
- */
 export async function getProductByName(name: string): Promise<Product | null> {
   const payload = await getPayload({ config: configPromise })
 
@@ -79,9 +69,6 @@ export async function getProductByName(name: string): Promise<Product | null> {
   return result.docs[0] ?? null
 }
 
-/**
- * Busca productos por texto en nombre o descripción.
- */
 export async function searchProducts(query: string) {
   const payload = await getPayload({ config: configPromise })
 
@@ -96,10 +83,6 @@ export async function searchProducts(query: string) {
   return result
 }
 
-/**
- * Obtiene 3 productos relacionados por categoría.
- * Si no hay suficientes en la categoría, completa con productos aleatorios del resto.
- */
 export async function getRelatedProducts(productId: number): Promise<Product[]> {
   const payload = await getPayload({ config: configPromise })
 

@@ -2,6 +2,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { Button } from '../ui/button'
+import { Funnel } from 'lucide-react'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 
 interface filtersPanelProps {
   priceRange: number[]
@@ -29,11 +31,19 @@ export default function FiltersPanel({
   }
 
   return (
-    <aside className="lg:col-span-1 relative">
-      <div className="sticky top-60 space-y-8 rounded-lg border border-zinc-200 bg-white p-6">
-        <div>
-          <h3 className="mb-4 text-lg font-bold uppercase text-black">Filters</h3>
-        </div>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          className="rounded-lg p-2 mr-2 transition-colors
+            data-[state=open]:bg-orange-600 data-[state=open]:text-white
+            bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+          title="Filter products"
+        >
+          <Funnel className="h-5 w-5" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="space-y-8 bg-white p-6">
+        <h3 className="mb-4 text-lg font-bold uppercase text-black">Filters</h3>
 
         <div>
           <Label className="mb-4 block text-sm font-bold text-black">Price Range</Label>
@@ -71,20 +81,16 @@ export default function FiltersPanel({
           </div>
         </div>
 
-        {/* New Products Only */}
-        <div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="new-only"
-              checked={showNewOnly}
-              onCheckedChange={(checked) => setShowNewOnly(checked as boolean)}
-            />
-            <Label htmlFor="new-only" className="cursor-pointer text-sm font-bold text-black">
-              New Products Only
-            </Label>
-          </div>
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="new-only"
+            checked={showNewOnly}
+            onCheckedChange={(checked) => setShowNewOnly(checked as boolean)}
+          />
+          <Label htmlFor="new-only" className="cursor-pointer text-sm font-bold text-black">
+            New Products Only
+          </Label>
         </div>
-
         {/* Clear Filters */}
         <Button
           className="w-full"
@@ -96,7 +102,7 @@ export default function FiltersPanel({
         >
           Clear Filters
         </Button>
-      </div>
-    </aside>
+      </PopoverContent>
+    </Popover>
   )
 }

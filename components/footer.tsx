@@ -16,7 +16,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="mb-12 flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
           <Link href="/" className="text-2xl font-bold tracking-wide">
-            Sonus
+            audiophile
           </Link>
         </div>
 
@@ -37,6 +37,7 @@ export function Footer() {
               <Link
                 key={social.name}
                 href={social.href}
+                target="_blank"
                 className="transition-colors hover:text-orange-600"
                 aria-label={social.name}
               >

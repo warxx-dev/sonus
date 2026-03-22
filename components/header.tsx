@@ -1,36 +1,30 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { Heart, Menu } from "lucide-react";
+import Link from 'next/link'
+import { Heart, Menu } from 'lucide-react'
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu";
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { useState } from "react";
-import { CartSheet } from "@/components/cart-sheet";
-import { useFavoritesStore } from "@/lib/store/favorites-store";
-import { useHydration } from "@/lib/hooks/use-store";
+} from '@/components/ui/navigation-menu'
+import { Button } from '@/components/ui/button'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { useState } from 'react'
+import { CartSheet } from '@/components/cart-sheet'
+import { useFavoritesStore } from '@/lib/store/favorites-store'
+import { useHydration } from '@/lib/hooks/use-store'
 
 const navigationItems = [
-  { name: "HOME", href: "/" },
-  { name: "PRODUCTS", href: "/products" },
-];
+  { name: 'HOME', href: '/' },
+  { name: 'PRODUCTS', href: '/products' },
+]
 
 export function Header() {
-  const [open, setOpen] = useState(false);
-  const { items } = useFavoritesStore();
-  const isHydrated = useHydration();
-  const totalFavorites = isHydrated ? items.length : 0;
+  const [open, setOpen] = useState(false)
+  const { items } = useFavoritesStore()
+  const isHydrated = useHydration()
+  const totalFavorites = isHydrated ? items.length : 0
 
   return (
     <header className="mx-auto w-full bg-zinc-900 text-white">
@@ -68,7 +62,7 @@ export function Header() {
 
         {/* Logo */}
         <Link href="/" className="text-xl font-bold tracking-wide">
-          Sonus
+          audiophile
         </Link>
 
         {/* Desktop Navigation */}
@@ -112,5 +106,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  );
+  )
 }

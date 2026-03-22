@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { useCartStore } from '@/lib/store/cart-store'
-import { ShoppingCart } from 'lucide-react'
+import { ArrowLeft, ShoppingCart } from 'lucide-react'
 import { checkoutSchema, type CheckoutFormValues } from '@/lib/schemas/checkout-schema'
 import { createCheckoutSession } from '../../actions/checkout'
 import CartSheetItems from '@/components/Cart/cart-sheet-items'
@@ -51,7 +51,7 @@ export default function CheckoutPage() {
             href="/"
             className="inline-block text-sm text-zinc-500 transition-colors hover:text-orange-600"
           >
-            Change by an arrow icon Back
+            <ArrowLeft /> Back
           </Link>
         </div>
       </section>

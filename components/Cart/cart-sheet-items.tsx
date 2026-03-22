@@ -19,7 +19,7 @@ export default function CartSheetItems({ items, subtotal, shipping, total }: Car
             </div>
             <div className="flex-1">
               <p className="text-sm font-bold text-black">{item.name}</p>
-              <p className="text-sm text-zinc-500">$ {item.price.toLocaleString()}</p>
+              <p className="text-sm text-zinc-500">$ {item.price.toLocaleString('en-US')}</p>
             </div>
             <p className="text-sm font-bold text-zinc-500">x{item.quantity}</p>
           </div>
@@ -29,7 +29,7 @@ export default function CartSheetItems({ items, subtotal, shipping, total }: Car
       <div className="space-y-2 border-t border-zinc-200 pt-6">
         <div className="flex justify-between">
           <p className="text-sm uppercase text-zinc-500">TOTAL</p>
-          <p className="text-lg font-bold text-black">$ {subtotal.toLocaleString()}</p>
+          <p className="text-lg font-bold text-black">$ {subtotal.toLocaleString('en-US')}</p>
         </div>
         <div className="flex justify-between">
           <p className="text-sm uppercase text-zinc-500">SHIPPING</p>
@@ -37,7 +37,7 @@ export default function CartSheetItems({ items, subtotal, shipping, total }: Car
         </div>
         <div className="flex justify-between pt-4">
           <p className="text-sm uppercase text-zinc-500">GRAND TOTAL</p>
-          <p className="text-lg font-bold text-orange-600">$ {total.toLocaleString()}</p>
+          <p className="text-lg font-bold text-orange-600">$ {total.toLocaleString('en-US')}</p>
         </div>
       </div>
     </>

@@ -1,8 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { CategoriesSection } from '@/components/categories-section'
-import { AboutSection } from '@/components/about-section'
 import type { Media } from '@/src/payload-types'
 import { ArrowLeft } from 'lucide-react'
 import { RelatedProducts } from '@/components/related-products'
@@ -54,7 +52,9 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                 {product.name}
               </h1>
               <p className="text-base leading-relaxed text-zinc-600">{product.description}</p>
-              <p className="text-2xl font-bold text-black">$ {product.price.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-black">
+                $ {product.price.toLocaleString('en-US')}
+              </p>
 
               <AddToCartClient product={product} imageUrl={imageUrl} />
             </div>
@@ -140,12 +140,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       )}
 
       <RelatedProducts relatedProducts={relatedProducts} />
-
-      {/* Categories */}
-      <CategoriesSection />
-
-      {/* About Section */}
-      <AboutSection />
     </>
   )
 }

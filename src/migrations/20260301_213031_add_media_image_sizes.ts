@@ -1,6 +1,6 @@
 import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-sqlite'
 
-export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.run(sql`ALTER TABLE \`media\` ADD \`sizes_thumbnail_url\` text;`)
   await db.run(sql`ALTER TABLE \`media\` ADD \`sizes_thumbnail_width\` numeric;`)
   await db.run(sql`ALTER TABLE \`media\` ADD \`sizes_thumbnail_height\` numeric;`)
@@ -25,13 +25,21 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.run(sql`ALTER TABLE \`media\` ADD \`sizes_desktop_mime_type\` text;`)
   await db.run(sql`ALTER TABLE \`media\` ADD \`sizes_desktop_filesize\` numeric;`)
   await db.run(sql`ALTER TABLE \`media\` ADD \`sizes_desktop_filename\` text;`)
-  await db.run(sql`CREATE INDEX \`media_sizes_thumbnail_sizes_thumbnail_filename_idx\` ON \`media\` (\`sizes_thumbnail_filename\`);`)
-  await db.run(sql`CREATE INDEX \`media_sizes_mobile_sizes_mobile_filename_idx\` ON \`media\` (\`sizes_mobile_filename\`);`)
-  await db.run(sql`CREATE INDEX \`media_sizes_tablet_sizes_tablet_filename_idx\` ON \`media\` (\`sizes_tablet_filename\`);`)
-  await db.run(sql`CREATE INDEX \`media_sizes_desktop_sizes_desktop_filename_idx\` ON \`media\` (\`sizes_desktop_filename\`);`)
+  await db.run(
+    sql`CREATE INDEX \`media_sizes_thumbnail_sizes_thumbnail_filename_idx\` ON \`media\` (\`sizes_thumbnail_filename\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`media_sizes_mobile_sizes_mobile_filename_idx\` ON \`media\` (\`sizes_mobile_filename\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`media_sizes_tablet_sizes_tablet_filename_idx\` ON \`media\` (\`sizes_tablet_filename\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`media_sizes_desktop_sizes_desktop_filename_idx\` ON \`media\` (\`sizes_desktop_filename\`);`,
+  )
 }
 
-export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+export async function down({ db }: MigrateDownArgs): Promise<void> {
   await db.run(sql`DROP INDEX \`media_sizes_thumbnail_sizes_thumbnail_filename_idx\`;`)
   await db.run(sql`DROP INDEX \`media_sizes_mobile_sizes_mobile_filename_idx\`;`)
   await db.run(sql`DROP INDEX \`media_sizes_tablet_sizes_tablet_filename_idx\`;`)

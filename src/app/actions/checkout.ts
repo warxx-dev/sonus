@@ -42,7 +42,6 @@ export async function createCheckoutSession(cartItems: CartItem[], userEmail: st
     throw new Error('No se pudo crear la sesión de pago')
   }
 
-  // redirect() throws a NEXT_REDIRECT error internally — must be outside try/catch
   if (sessionUrl) {
     redirect(sessionUrl)
   }

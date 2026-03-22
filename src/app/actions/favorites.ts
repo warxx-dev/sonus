@@ -12,9 +12,6 @@ export interface FavoriteProduct {
   image: string | null
 }
 
-/**
- * Serializa un producto a los campos mínimos necesarios para favoritos.
- */
 function serializeForFavorite(product: Product): FavoriteProduct {
   const image = typeof product.image === 'object' ? ((product.image as Media).url ?? null) : null
 
@@ -27,12 +24,6 @@ function serializeForFavorite(product: Product): FavoriteProduct {
   }
 }
 
-/**
- * Valida que un producto existe y devuelve los datos necesarios
- * para agregarlo a favoritos en el cliente.
- *
- * Retorna null si el producto no existe.
- */
 export async function addFavorite(
   productId: number,
 ): Promise<{ success: boolean; product: FavoriteProduct | null; error?: string }> {
@@ -58,10 +49,6 @@ export async function addFavorite(
   }
 }
 
-/**
- * Valida que un producto existe y alterna su estado de favorito.
- * Devuelve los datos necesarios para el store del cliente.
- */
 export async function toggleFavorite(
   productId: number,
 ): Promise<{ success: boolean; product: FavoriteProduct | null; error?: string }> {

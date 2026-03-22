@@ -1,17 +1,24 @@
-"use client";
+'use client'
 
-import { useFavoritesStore } from "@/lib/store/favorites-store";
-import { useCartStore } from "@/lib/store/cart-store";
-import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Heart, ShoppingCart, Trash2 } from "lucide-react";
+import { useFavoritesStore } from '@/lib/store/favorites-store'
+import { useCartStore } from '@/lib/store/cart-store'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Check, Heart, Trash2 } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 export default function FavoritesPage() {
-  const { items, removeItem } = useFavoritesStore();
-  const { addItem } = useCartStore();
+  const { items, removeItem } = useFavoritesStore()
+  const { addItem } = useCartStore()
+  const [isAdded, setIsAdded] = useState(false)
 
   const handleAddToCart = (item: (typeof items)[0]) => {
+    toast.success(`Added to cart: ${item.name}`, {
+      description: `1 unit(s) added.`,
+    })
+    setIsAdded(true)
     addItem(
       {
         id: item.id,
@@ -20,8 +27,11 @@ export default function FavoritesPage() {
         image: item.image,
       },
       1,
-    );
-  };
+    )
+    setTimeout(() => {
+      setIsAdded(false)
+    }, 2000)
+  }
 
   if (items.length === 0) {
     return (
@@ -37,16 +47,13 @@ export default function FavoritesPage() {
             </p>
           </div>
           <Link href="/products">
-            <Button
-              size="lg"
-              className="px-8 py-6 text-sm font-bold uppercase tracking-wider"
-            >
+            <Button size="lg" className="px-8 py-6 text-sm font-bold uppercase tracking-wider">
               Browse Products
             </Button>
           </Link>
         </div>
       </main>
-    );
+    )
   }
 
   return (
@@ -58,8 +65,7 @@ export default function FavoritesPage() {
             My Favorites
           </h1>
           <p className="text-lg text-zinc-600">
-            {items.length} {items.length === 1 ? "product" : "products"} in your
-            favorites
+            {items.length} {items.length === 1 ? 'product' : 'products'} in your favorites
           </p>
         </div>
 
@@ -80,10 +86,7 @@ export default function FavoritesPage() {
               </button>
 
               {/* Product Image */}
-              <Link
-                href={`/products/${item.id}`}
-                className="relative h-64 w-full bg-zinc-100"
-              >
+              <Link href={`/products/${item.id}`} className="relative h-64 w-full bg-zinc-100">
                 <Image
                   src={item.image}
                   alt={item.name}
@@ -104,7 +107,7 @@ export default function FavoritesPage() {
                     </h3>
                   </Link>
                   <p className="text-lg font-bold text-black">
-                    ${item.price.toLocaleString()}
+                    ${item.price.toLocaleString('en-US')}
                   </p>
                 </div>
 
@@ -112,11 +115,20 @@ export default function FavoritesPage() {
                 <div className="flex gap-3">
                   <Button
                     onClick={() => handleAddToCart(item)}
-                    className="flex-1 gap-2 text-sm font-bold uppercase tracking-wider"
+                    className={`flex-1 gap-2 text-sm font-bold uppercase tracking-wider ${
+                      isAdded
+                        ? 'bg-green-600 hover:bg-green-700 pointer-events-none'
+                        : 'bg-orange-600 hover:bg-orange-700'
+                    }`}
                     size="lg"
                   >
-                    <ShoppingCart className="h-4 w-4" />
-                    Add to Cart
+                    {isAdded ? (
+                      <span className="flex items-center gap-2">
+                        <Check className="h-4 w-4" /> ADDED!
+                      </span>
+                    ) : (
+                      'Add to Cart'
+                    )}
                   </Button>
                   <Link href={`/products/${item.id}`} className="flex-1">
                     <Button
@@ -134,5 +146,5 @@ export default function FavoritesPage() {
         </div>
       </div>
     </main>
-  );
+  )
 }

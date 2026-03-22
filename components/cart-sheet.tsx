@@ -6,12 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ShoppingCart, Trash2, X } from 'lucide-react'
 import { useCartStore } from '@/lib/store/cart-store'
-import { useState } from 'react'
 import { useHydration } from '@/lib/hooks/use-store'
 
 export function CartSheet() {
-  const { items, removeItem, updateQuantity, clearCart } = useCartStore()
-  const [open, setOpen] = useState(false)
+  const { items, removeItem, updateQuantity, clearCart, isOpen, setIsOpen } = useCartStore()
   const isHydrated = useHydration()
 
   const totalItems = isHydrated ? items.reduce((total, item) => total + item.quantity, 0) : 0
@@ -20,7 +18,7 @@ export function CartSheet() {
     : 0
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button className="bg-transparent relative p-2 text-white hover:bg-white/10 hover:text-orange-500 cursor-pointer">
           <ShoppingCart className="h-6 w-6" />
@@ -64,7 +62,7 @@ export function CartSheet() {
                     {/* Product Info */}
                     <div className="flex-1">
                       <h4 className="text-sm font-bold text-black">{item.name}</h4>
-                      <p className="text-sm text-zinc-600">${item.price.toLocaleString()}</p>
+                      <p className="text-sm text-zinc-600">${item.price.toLocaleString('en-US')}</p>
                     </div>
 
                     {/* Quantity Controls */}
@@ -99,12 +97,12 @@ export function CartSheet() {
               <div className="flex items-center justify-between border-t pt-6">
                 <span className="text-sm font-medium uppercase text-zinc-500">TOTAL</span>
                 <span className="text-lg font-bold text-black">
-                  $ {totalPrice.toLocaleString()}
+                  $ {totalPrice.toLocaleString('en-US')}
                 </span>
               </div>
 
               {/* Checkout Button */}
-              <Link href="/checkout" className="block w-full" onClick={() => setOpen(false)}>
+              <Link href="/checkout" className="block w-full" onClick={() => setIsOpen(false)}>
                 <Button
                   size="lg"
                   className="w-full bg-orange-600 text-sm font-bold uppercase tracking-wider hover:bg-orange-700"

@@ -1,6 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { SeeProductButton } from '@/components/ui/see-product-button'
 
 const products = [
   {
@@ -9,21 +8,21 @@ const products = [
     description:
       'Upgrade to premium speakers that are phenomenally built to deliver truly remarkable sound.',
     image: '/images/home/desktop/image-speaker-zx9-1.png',
-    href: '/products/zx9-speaker',
+    href: '/products/6',
     variant: 'primary' as const,
   },
   {
     id: 2,
     name: 'ZX7 SPEAKER',
     image: '/images/home/desktop/image-speaker-zx7.jpg',
-    href: '/products/zx7-speaker',
+    href: '/products/5',
     variant: 'secondary' as const,
   },
   {
     id: 3,
     name: 'YX1 EARPHONES',
     image: '/images/home/desktop/image-earphones-yx1.jpg',
-    href: '/products/yx1-earphones',
+    href: '/products/1',
     variant: 'tertiary' as const,
   },
 ]
@@ -51,14 +50,10 @@ export function HotProducts() {
               <p className="max-w-md text-lg leading-relaxed text-white/90">
                 {products[0].description}
               </p>
-              <Link href={products[0].href}>
-                <Button
-                  size="lg"
-                  className="bg-black px-8 py-6 text-sm font-bold uppercase tracking-wider text-white hover:bg-zinc-800"
-                >
-                  SEE PRODUCT
-                </Button>
-              </Link>
+              <SeeProductButton
+                href={products[0].href}
+                className="bg-black px-8 py-6 text-sm font-bold uppercase tracking-wider text-white hover:bg-zinc-800"
+              />
             </div>
           </div>
         </div>
@@ -73,14 +68,10 @@ export function HotProducts() {
               <h2 className="text-3xl font-bold uppercase tracking-wide text-black">
                 {products[1].name}
               </h2>
-              <Link href={products[1].href}>
-                <Button
-                  size="lg"
-                  className="border-2 border-black bg-transparent px-8 py-6 text-sm font-bold uppercase tracking-wider text-black hover:bg-black hover:text-white"
-                >
-                  SEE PRODUCT
-                </Button>
-              </Link>
+              <SeeProductButton
+                href={products[1].href}
+                className="border-2 border-black bg-transparent px-8 py-6 text-sm font-bold uppercase tracking-wider text-black hover:bg-black hover:text-white"
+              />
             </div>
           </div>
         </div>
@@ -88,7 +79,7 @@ export function HotProducts() {
         {/* YX1 Earphones - Two Column Grid */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Left - Image */}
-          <div className="relative h-[300px] overflow-hidden rounded-lg">
+          <div className="relative h-75 overflow-hidden rounded-lg">
             <Image src={products[2].image} alt={products[2].name} fill className="object-cover" />
           </div>
 
@@ -98,14 +89,10 @@ export function HotProducts() {
               <h2 className="text-3xl font-bold uppercase tracking-wide text-black">
                 {products[2].name}
               </h2>
-              <Link href={products[2].href}>
-                <Button
-                  size="lg"
-                  className="border-2 border-black bg-transparent px-8 py-6 text-sm font-bold uppercase tracking-wider text-black hover:bg-black hover:text-white"
-                >
-                  SEE PRODUCT
-                </Button>
-              </Link>
+              <SeeProductButton
+                href={products[2].href}
+                className="border-2 border-black bg-transparent px-8 py-6 text-sm font-bold uppercase tracking-wider text-black hover:bg-black hover:text-white"
+              />
             </div>
           </div>
         </div>
