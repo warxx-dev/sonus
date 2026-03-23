@@ -31,7 +31,7 @@ export function HeroSection() {
                 <div className="absolute inset-0 rounded-full bg-zinc-800 blur-2xl" />
               </div>
               <Image
-                src="/images/home/desktop/image-hero1.png"
+                src="/images/home/desktop/image-hero.png"
                 alt="XX99 Mark II Headphones"
                 fill
                 className="object-contain mix-blend-normal"
